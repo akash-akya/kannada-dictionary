@@ -1,4 +1,27 @@
-# Dictionary Anywhere
-Dictionary extension that helps you stay focused on what you are reading by eliminating the need to search for meaning, Double-clicking any word will view its definition in a small pop-up bubble. Now you never have to leave what you are reading to search meaning for the words you don't know.
+# Kannada Dictionary
 
-Feel free to install extension <a href="https://addons.mozilla.org/en-US/firefox/addon/dictionary-anyvhere/">Dictionary Anywhere</a>, currently available on Mozilla Firefox.
+Kannada - English extension for web browsers. I mainly created it for reading Old Kannada (ಹಳೆಗನ್ನಡ) literature. Current version works completely offline.
+
+## Credits
+
+* Uses wonderful [Alar dictionary](https://alar.ink/) [data](https://github.com/alar-dict/data) *(thanks to V. Krishna and Zerodha Tech)*
+* [Anywhere Dictionary](https://github.com/meetDeveloper/Dictionary-Anywhere)
+
+Extension is not published yet.
+
+## License
+
+```
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+```

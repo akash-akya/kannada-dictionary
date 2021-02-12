@@ -1,87 +1,60 @@
-const GOOGLE_SPEECH_URI = 'https://www.google.com/speech-api/v1/synthesize',
-
-    DEFAULT_HISTORY_SETTING = {
-        enabled: true
-    };
+const DEFAULT_HISTORY_SETTING = {enabled: true},
+      INDEX_URL = browser.runtime.getURL("dict/index.json"),
+      REFERENCE_REGEXP = /^= ([^0-9]+)([0-9]*)\.$/;
 
 browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    const { word, lang } = request, 
-        url = `https://www.google.com/search?hl=${lang}&q=define+${word}&gl=US`;
-    
-    fetch(url, { 
-            method: 'GET',
-            credentials: 'omit'
-        })
-        .then((response) => response.text())
-        .then((text) => {
-            const document = new DOMParser().parseFromString(text, 'text/html'),
-                content = extractMeaning(document, { word, lang });
-
-            sendResponse({ content });
-
-            content && browser.storage.local.get().then((results) => {
-                let history = results.history || DEFAULT_HISTORY_SETTING;
-        
-                history.enabled && saveWord(content)
-            });
-        })
-
+    const { word, lang } = request;
+    getMeaning(word).then(content => sendResponse({ content }));
     return true;
 });
 
-function extractMeaning (document, context) {
-    if (!document.querySelector("[data-dobid='hdw']")) { return null; }
-    
-    var word = document.querySelector("[data-dobid='hdw']").textContent,
-        definitionDiv = document.querySelector("div[data-dobid='dfn']"),
-        meaning = "";
+    async function getMeaning(word) {
+        var text = await fetch(INDEX_URL, {method: 'GET'}).then(response => response.text());
 
-    if (definitionDiv) {
-        definitionDiv.querySelectorAll("span").forEach(function(span){
-            if(!span.querySelector("sup"))
-                 meaning = meaning + span.textContent;
-        });
+        // we split dictionary to into separate managable files, each
+        // containing "chunk" of words.  dictionary chunk files are
+        // named as `chunk_{index}.json` "index.json" contains index
+        // for these files
+        const wordsIndex = JSON.parse(text).index;
+        const index = wordsIndex.findIndex(chunk => word <= chunk.end);
+
+        if (index < 0) { return null; }
+
+        const chunkURL = browser.runtime.getURL(`dict/chunk_${index}.json`);
+        text = await fetch(chunkURL, {method: 'GET'}).then(response => response.text());
+        const dict = JSON.parse(text);
+
+        // TODO: removing suffix to get root word
+        const meaning = dict[word];
+
+        if (meaning == null) { return null; }
+
+        // a definition is a reference to another word, if definition is of
+        // the form `= another_word.` or `= another_word(index).`
+        // index is used to disambiguate. (check REFERENCE_REGEXP).
+        //
+        // NOTE: we are assuming that generally there wont be nested references to other words
+        for (var i = 0; i < meaning.length; i++ ) {
+            // if the definition is a reference, then there *should* be only one entry under `defs`
+            const def = meaning[i].defs[0];
+
+            // matching with regexp for every definition *might* be expensive (?)
+            if (def.startsWith("= ")) {
+                const [ _, ref, refIndex ] = def.match(REFERENCE_REGEXP);
+
+                // TODO: check existing `dict` first
+                const content = await getMeaning(ref);
+                if (content) {
+                    if (refIndex) {
+                        meaning[i] = content.meaning[refIndex - 1];
+                    } else {
+                        meaning[i] = content.meaning[0];
+                    }
+                } else {
+                    console.error(`reference "${ref}" for the word "${word}" does not exists`);
+                }
+            }
+        }
+
+        return { meaning: meaning, word: word };
     }
-
-    meaning = meaning[0].toUpperCase() + meaning.substring(1);
-
-    var audio = document.querySelector("audio[jsname='QInZvb']"),
-        source = document.querySelector("audio[jsname='QInZvb'] source"),
-        audioSrc = source && source.getAttribute('src');
-
-    if (audioSrc) {
-        !audioSrc.includes("http") && (audioSrc = audioSrc.replace("//", "https://"));
-    }
-    else if (audio) {
-        let exactWord = word.replace(/·/g, ''), // We do not want syllable seperator to be present.
-            
-        queryString = new URLSearchParams({
-            text: exactWord, 
-            enc: 'mpeg', 
-            lang: context.lang, 
-            speed: '0.4', 
-            client: 'lr-language-tts', 
-            use_google_only_voices: 1
-        }).toString();
-
-        audioSrc = `${GOOGLE_SPEECH_URI}?${queryString}`;
-    }
-
-    return { word: word, meaning: meaning, audioSrc: audioSrc };
-};
-
-function saveWord (content) {
-    let word = content.word,
-        meaning = content.meaning,
-      
-        storageItem = browser.storage.local.get('definitions');
-
-        storageItem.then((results) => {
-            let definitions = results.definitions || {};
-
-            definitions[word] = meaning;
-            browser.storage.local.set({
-                definitions
-            });
-        })
-}

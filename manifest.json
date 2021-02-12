@@ -1,9 +1,9 @@
 {
-  "author": "Suraj Jain",
+  "author": "Akash Hiremath",
 
   "manifest_version": 2,
-  "name": "Dictionary Anywhere",
-  "version": "1.1.0",
+  "name": "Kannada Dictionary",
+  "version": "0.1.0",
 
   "description": "View definitions easily as you browse the web. Double-click any word to view its definition in a small pop-up bubble.",
 
@@ -20,6 +20,8 @@
     "chrome_style": true
   },
 
+  "web_accessible_resources": ["dict/*.json"],
+
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -34,12 +36,16 @@
     "scripts": [
       "common/browser-polyfill.js",
       "background/background.js"
-    ],
-    "persistent": false
+    ]
+  },
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "kannada-dictionary@akash.addons.mozilla.org"
+    }
   },
 
   "permissions": [
-    "storage",
-    "https://www.google.com/"
+    "storage"
   ]
 }
