@@ -24,7 +24,7 @@
 
         retrieveMeaning(info)
             .then((response) => {
-                if (!response.content) { return noMeaningFound(createdDiv); }
+                if (!response.content) { return noMeaningFound(createdDiv, info.word); }
 
                 appendToDiv(createdDiv, response.content);
             });
@@ -140,7 +140,7 @@
         var meaning = document.createElement("div");
         meaning.className = "meaning";
         // meaning.innerHTML = "&nbsp;";
-        meaning.style.display = "none";
+        meaning.style = "display: none; margin-block-end: 5px";
 
         content.appendChild(heading);
         content.appendChild(meaning);
@@ -194,9 +194,16 @@
     function appendToDiv(createdDiv, content){
         var hostDiv = createdDiv.heading.getRootNode().host;
         var popupDiv = createdDiv.heading.getRootNode().querySelectorAll("div")[1];
-
         var heightBefore = popupDiv.clientHeight;
-        createdDiv.heading.textContent = content.word;
+
+        var alarLink = document.createElement("a");
+        alarLink.target = "_blank";
+        alarLink.textContent = content.word;
+        alarLink.href = `https://alar.ink/dictionary/kannada/english/${encodeURIComponent(content.word)}`;
+
+        createdDiv.heading.style = "margin-block-end: 5px;";
+        createdDiv.heading.textContent = "";
+        createdDiv.heading.appendChild(alarLink);
 
         createdDiv.meaning.style.display = "inline-block";
         content.meaning.forEach((e) => {
@@ -208,16 +215,23 @@
         var heightAfter = popupDiv.clientHeight;
         var difference = heightAfter - heightBefore;
 
-
         if(popupDiv.classList.contains("flipped_y")){
             hostDiv.style.top = parseInt(hostDiv.style.top) - difference + 1 + "px";
         }
     }
 
-    function noMeaningFound (createdDiv){
-      createdDiv.heading.textContent = "Sorry";
-      createdDiv.meaning.style.display = "inline-block";
-      createdDiv.meaning.textContent = "No definition found.";
+    function noMeaningFound(createdDiv, word){
+        var alarLink = document.createElement("a");
+        alarLink.target = "_blank";
+        alarLink.textContent = word;
+        alarLink.href = `https://alar.ink/dictionary/kannada/english/${word}`;
+
+        createdDiv.heading.style = "margin-block-end: 5px;";
+        createdDiv.heading.textContent = "";
+        createdDiv.heading.appendChild(alarLink);
+
+        createdDiv.meaning.style.display = "inline-block";
+        createdDiv.meaning.textContent = "ಆಯ್ಕೆ ಮಾಡಿದ ಪದಕ್ಕೆ ವಿವರಣೆ ದೊರಕುತ್ತಿಲ್ಲ";
     }
 
     function removeMeaning(event) {
