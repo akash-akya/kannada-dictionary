@@ -6,7 +6,16 @@
         LANGUAGE,
         TRIGGER_KEY;
 
-    function showMeaning (event){
+    function getTargetDictionaryDiv(event) {
+        var element = event.target;
+        if(element.classList.contains("dictionaryDiv")) {
+            return element;
+        } else {
+            return null;
+        }
+    }
+
+    function showMeaning (event) {
         var createdDiv,
             info = getSelectionInfo(event);
 
@@ -28,6 +37,7 @@
     function getSelectionInfo(event) {
         var word;
         var boundingRect;
+        var zIndex;
 
         if (window.getSelection().toString().length > 1) {
             word = window.getSelection().toString();
@@ -46,14 +56,35 @@
             left = event.pageX;
         }
 
+        var dictDiv = getTargetDictionaryDiv(event);
+        if (dictDiv) {
+            zIndex = getStyle(dictDiv, "z-index");
+            zIndex = parseInt(zIndex) + 1;
+        } else {
+            zIndex = 1000000; // default value for first dictionary popup
+        }
+
         return {
             top: top,
             bottom: bottom,
             left: left,
             word: word,
             clientY: event.clientY,
-            height: boundingRect.height
+            height: boundingRect.height,
+            zIndex: zIndex.toString(),
         };
+    }
+
+    function getStyle(el, styleProp) {
+        var value;
+
+        if (window.getComputedStyle) {
+            value = document.defaultView.getComputedStyle(el, null).getPropertyValue(styleProp);
+        } else if (el.currentStyle) {
+            value = el.currentStyle[styleProp];
+        }
+
+        return value;
     }
 
     function isKannadaWord(word) {
@@ -71,7 +102,7 @@
         hostDiv.className = "dictionaryDiv";
         hostDiv.style.left = info.left -10 + "px";
         hostDiv.style.position = "absolute";
-        hostDiv.style.zIndex = "1000000"
+        hostDiv.style.zIndex = info.zIndex;
         hostDiv.attachShadow({mode: 'open'});
 
         var shadow = hostDiv.shadowRoot;
@@ -189,13 +220,25 @@
       createdDiv.meaning.textContent = "No definition found.";
     }
 
-    function removeMeaning(event){
-        var element = event.target;
-        if(!element.classList.contains("dictionaryDiv")){
-            document.querySelectorAll(".dictionaryDiv").forEach(function(Node){
-                Node.remove();
-            });
+    function removeMeaning(event) {
+        var currentZIndex;
+        var dictDiv;
+        var elementZIndex;
+
+        dictDiv = getTargetDictionaryDiv(event);
+
+        if (dictDiv) {
+            currentZIndex = parseInt(getStyle(dictDiv, "z-index"));
+        } else {
+            currentZIndex = -1;
         }
+
+        document.querySelectorAll(".dictionaryDiv").forEach( (div) => {
+            elementZIndex = parseInt(getStyle(div, "z-index"));
+            if (elementZIndex > currentZIndex) {
+                div.remove();
+            }
+        });
     }
 
     document.addEventListener('dblclick', ((e) => {
