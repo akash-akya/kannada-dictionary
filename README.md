@@ -1,6 +1,6 @@
 # Kannada Dictionary
 
-Kannada - English extension for web browsers. I mainly created it for reading Old Kannada (ಹಳೆಗನ್ನಡ) literature. Current version works completely offline.
+Offline Kannada - English dictionary extension for web browsers.
 
 ## Credits
 
