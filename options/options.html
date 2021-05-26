@@ -1,9 +1,10 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <title>Dictionary Anywhere - Extension Options</title>
     <link rel="stylesheet" type="text/css" href="./options.css">
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
   </head>
   <body>
     <div id="content">
@@ -11,19 +12,6 @@
         <div>Extension Options</div>
       </div>
       <form name="options-form" action="">
-        <div class="option-row">
-          <div class="option-name">My language:</div>
-          <div class="option-value">
-            <div class="option-value-primary">
-              <select id="language-selector">
-                <option value="en">English (US)</option>
-                <option value="fr">French</option>
-                <option value="de">German</option>
-                <option value="es">Spanish</option>
-              </select>
-            </div>
-          </div>
-        </div>
         <div class="option-row">
           <div class="option-name">Pop-up definitions:</div>
           <div class="option-value">
@@ -40,33 +28,6 @@
                 <option value="alt">Alt</option>
                 <option value="shift">Shift</option>
               </select>
-            </div>
-          </div>
-        </div>
-        <div class="option-row">
-          <div class="option-name">Word history:</div>
-          <div class="option-value">
-            <div class="option-value-primary">
-              <input type="checkbox" name="store-history-checkbox"
-                     id="store-history-checkbox">
-              <label for="store-history-checkbox">
-                Store words I look up, including definitions
-              </label>
-            </div>
-            <div class="option-value-secondary">
-              Number of words stored in history:
-              <span id="num-words-in-history">0</span>
-            </div>
-            <div class="option-value-primary">
-              <button id="download-history-btn" class="btn btn-default">
-                Download history
-              </button>
-              <a href="#" id="download-history-link"
-                 download="DictionaryAnywhere.txt">
-              </a>
-              <button id="clear-history-btn" class="btn btn-default">
-                  Clear history
-                </button>
             </div>
           </div>
         </div>
