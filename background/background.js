@@ -25,7 +25,7 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const dict = JSON.parse(text);
 
         // TODO: removing suffix to get root word
-        const meaning = dict[word];
+        var meaning = dict[word];
 
         if (meaning == null) { return null; }
 
@@ -35,6 +35,9 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
         //
         // NOTE: we are assuming that generally there wont be nested references to other words
         for (var i = 0; i < meaning.length; i++ ) {
+            // skip if word exists but there are no definition, ex: ನಲ್ಲಿ
+            if (meaning[i].defs.length == 0) { continue; }
+
             // if the definition is a reference, then there *should* be only one entry under `defs`
             const def = meaning[i].defs[0];
 
