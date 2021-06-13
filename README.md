@@ -2,12 +2,12 @@
 
 Offline Kannada - English dictionary extension for web browsers.
 
+Download it from [Chrome Web Store](https://chrome.google.com/webstore/detail/kannada-dictionary/bkadblplgjpbdfapceakimmcjakomiph) or [Firefox Addons](https://addons.mozilla.org/en-US/firefox/addon/kannada-dictionary/).
+
 ## Credits
 
 * Uses wonderful [Alar dictionary](https://alar.ink/) [data](https://github.com/alar-dict/data) *(thanks to V. Krishna and Zerodha Tech)*
 * [Anywhere Dictionary](https://github.com/meetDeveloper/Dictionary-Anywhere)
-
-Extension is not published yet.
 
 ## License
 
